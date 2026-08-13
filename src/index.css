@@ -494,6 +494,58 @@ kbd {
   font-weight: 700;
 }
 
+.code-block__copy {
+  margin-left: auto;
+  background: transparent;
+  border: 1px solid var(--border-strong);
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.15rem 0.5rem;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.code-block__copy:hover {
+  color: var(--green);
+  border-color: var(--green);
+}
+
+.code-block__copy:active {
+  transform: scale(0.97);
+}
+
+.code-block__header {
+  position: relative;
+}
+
+.code-block__header .code-block__status {
+  margin-left: 0;
+}
+
+.code-block__header .code-block__copy + .code-block__status {
+  margin-left: 0.7rem;
+}
+
+.typed-cursor {
+  display: inline-block;
+  width: 0.6em;
+  height: 1em;
+  background: var(--green);
+  animation: blink 1s steps(2, start) infinite;
+  vertical-align: text-bottom;
+}
+
+.log-line {
+  color: var(--green);
+}
+
+.log-line:first-child {
+  color: var(--amber);
+}
+
 /* ---------- Inline code ---------- */
 
 code.inline {
@@ -650,6 +702,55 @@ a.anchor:hover {
 .toc a .n {
   color: var(--red);
   font-size: 0.62rem;
+}
+
+/* ---------- Docs: man-style section header & switch ---------- */
+
+.doc-header__line {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.02em;
+  animation: doc-in 0.4s var(--ease-out);
+}
+
+.doc-header__rule {
+  margin: 0.9rem 0 1.8rem;
+  height: 2px;
+  background: linear-gradient(90deg, var(--red) 0 44px, var(--border) 44px 100%);
+  animation: doc-rule 0.5s var(--ease-out);
+}
+
+.doc-body {
+  animation: doc-in 0.45s var(--ease-out);
+}
+
+@keyframes doc-in {
+  from {
+    opacity: 0;
+    transform: translateX(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes doc-rule {
+  from {
+    background: linear-gradient(90deg, var(--red) 0 0%, var(--border) 0% 100%);
+  }
+  to {
+    background: linear-gradient(90deg, var(--red) 0 44px, var(--border) 44px 100%);
+  }
+}
+
+.doc-nav {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.8rem;
+  margin-top: 2.4rem;
+  padding-top: 1.4rem;
+  border-top: 1px solid var(--border);
 }
 
 /* ---------- Roadmap: vertical timeline ---------- */
