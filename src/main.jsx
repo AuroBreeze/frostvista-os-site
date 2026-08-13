@@ -11,9 +11,11 @@ import Changelog from './pages/Changelog'
 import Community from './pages/Community'
 import Stats from './pages/Stats'
 
+const basename = (import.meta.env.BASE_URL || '/').replace(/\/+$/, '') || '/'
+
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <BrowserRouter>
+    <BrowserRouter basename={basename}>
       <ScrollToTop />
       <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
         <Nav />
