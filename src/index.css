@@ -829,6 +829,65 @@ a.anchor:hover {
   }
 }
 
+/* ---------- Community: connect panels ---------- */
+
+.comm-panel {
+  border: 1px solid var(--border);
+  background: var(--panel);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.comm-panel__body {
+  padding: 1.5rem 1.6rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  flex: 1;
+}
+
+.handshake {
+  border: 1px solid var(--border);
+  background: var(--bg-soft);
+  padding: 0.9rem 1.1rem;
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  line-height: 1.6;
+  color: var(--ink-soft);
+  min-height: 128px;
+}
+
+.handshake .ok { color: var(--green); }
+.handshake .wait { color: var(--amber); }
+.handshake .muted { color: var(--muted); }
+
+.status-led {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.62rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--green);
+}
+
+.status-led::before {
+  content: '';
+  width: 7px;
+  height: 7px;
+  background: var(--green);
+  animation: blink 1.2s steps(2, start) infinite;
+}
+
+.status-led--red {
+  color: var(--red);
+}
+
+.status-led--red::before {
+  background: var(--red);
+}
+
 /* ---------- Roadmap: signal theme ---------- */
 
 .eq {
