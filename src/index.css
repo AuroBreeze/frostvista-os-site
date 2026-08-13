@@ -77,6 +77,55 @@ body::before {
   color: var(--bg);
 }
 
+/* ---------- Scrollbars (dark terminal) ---------- */
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-strong) transparent;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border: 2px solid var(--bg);
+  border-radius: 0;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--muted);
+}
+
+::-webkit-scrollbar-corner {
+  background: var(--bg);
+}
+
+/* scrollbar in code/table/panel overflow areas */
+.code-block pre::-webkit-scrollbar-track,
+.table-wrap::-webkit-scrollbar-track,
+.scroll-zone::-webkit-scrollbar-track {
+  background: var(--bg-soft);
+}
+
+.code-block pre::-webkit-scrollbar-thumb,
+.table-wrap::-webkit-scrollbar-thumb,
+.scroll-zone::-webkit-scrollbar-thumb {
+  background: var(--faint);
+  border-color: var(--bg-soft);
+}
+
+.scroll-zone {
+  scrollbar-width: thin;
+  scrollbar-color: var(--faint) var(--bg-soft);
+}
+
 a {
   color: inherit;
   text-decoration: none;
@@ -169,7 +218,7 @@ h3 {
 }
 
 .section {
-  padding: 6.5rem 0;
+  padding: 2.6rem 0;
 }
 
 .section + .section {
@@ -180,15 +229,17 @@ h3 {
 
 .reveal {
   opacity: 0;
-  transform: translateY(14px);
+  transform: var(--reveal-from, translateY(16px));
   transition: opacity 0.6s var(--ease-out), transform 0.6s var(--ease-out);
   will-change: transform, opacity;
 }
 
 .reveal.is-visible {
   opacity: 1;
-  transform: translateY(0);
+  transform: translateY(0) translateX(0) scale(1);
 }
+
+.reveal--zoom { transition-duration: 0.7s; }
 
 @media (prefers-reduced-motion: reduce) {
   .reveal {
@@ -409,16 +460,16 @@ kbd {
 }
 
 .code-block pre {
-  padding: 1rem 1.1rem;
+  padding: 0.85rem 1rem;
   overflow-x: auto;
   font-family: var(--font-mono);
-  font-size: 0.78rem;
-  line-height: 1.6;
+  font-size: 0.72rem;
+  line-height: 1.5;
   color: var(--ink-soft);
 }
 
 .code-block pre > div {
-  min-height: 1.35em;
+  min-height: 1.2em;
   white-space: pre;
 }
 
@@ -568,7 +619,152 @@ a.anchor:hover {
   border-color: var(--green);
 }
 
-/* hazard stripe */
+/* ---------- Docs: sticky TOC ---------- */
+
+.toc {
+  position: sticky;
+  top: 84px;
+  align-self: start;
+  border: 1px solid var(--border);
+  background: var(--bg-soft);
+}
+
+.toc a {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  padding: 0.55rem 1rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  border-left: 2px solid transparent;
+  transition: color 0.15s, border-color 0.15s, background 0.15s;
+}
+
+.toc a:hover {
+  color: var(--ink);
+  background: var(--panel);
+}
+
+.toc a .n {
+  color: var(--red);
+  font-size: 0.62rem;
+}
+
+/* ---------- Roadmap: vertical timeline ---------- */
+
+.timeline {
+  position: relative;
+  margin-left: 18px;
+  padding-left: 30px;
+  border-left: 1px solid var(--border-strong);
+}
+
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: -2px;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: var(--red);
+  opacity: 0.14;
+}
+
+.timeline-item {
+  position: relative;
+  margin-bottom: 1.4rem;
+}
+
+.timeline-item::before {
+  content: '';
+  position: absolute;
+  left: -41px;
+  top: 26px;
+  width: 13px;
+  height: 13px;
+  background: var(--bg);
+  border: 2px solid var(--green);
+  transform: translateX(-50%) rotate(45deg);
+}
+
+.timeline-item--wip::before {
+  border-color: var(--red);
+  background: var(--red);
+  animation: blink 1.2s steps(2, start) infinite;
+}
+
+/* ---------- Changelog: git log ---------- */
+
+.gitlog {
+  position: relative;
+  margin-left: 16px;
+  padding-left: 34px;
+  border-left: 1px solid var(--border-strong);
+}
+
+.gitlog-item {
+  position: relative;
+  margin-bottom: 1.6rem;
+}
+
+.gitlog-item::before {
+  content: '';
+  position: absolute;
+  left: -43px;
+  top: 30px;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: var(--bg);
+  border: 2px solid var(--amber);
+}
+
+.gitlog-item--new::before {
+  border-color: var(--green);
+}
+
+.commit-hash {
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  color: var(--amber);
+}
+
+/* ---------- Community: scan reveal ---------- */
+
+.scan {
+  position: relative;
+  overflow: hidden;
+}
+
+.scan::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    rgba(74, 246, 38, 0.08) 48%,
+    rgba(74, 246, 38, 0.16) 50%,
+    rgba(74, 246, 38, 0.08) 52%,
+    transparent 100%
+  );
+  background-size: 100% 220%;
+  background-position: 0 -120%;
+  animation: scan-sweep 2.6s var(--ease-out) forwards;
+  animation-delay: 0.3s;
+}
+
+@keyframes scan-sweep {
+  to {
+    background-position: 0 120%;
+  }
+}
+
+/* ---------- misc ---------- */
+
 .hazard {
   background: repeating-linear-gradient(
     -45deg,

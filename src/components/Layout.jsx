@@ -70,86 +70,27 @@ export function Footer() {
   return (
     <footer style={{ borderTop: '1px solid var(--border)', background: 'var(--bg-soft)' }}>
       <div style={{ height: 6 }} className="hazard" />
-      <div className="container" style={{ paddingTop: '3rem', paddingBottom: '3rem' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr 1fr 1.2fr', gap: '1px', background: 'var(--border)', border: '1px solid var(--border)' }}>
-          <div style={{ background: 'var(--bg)', padding: '1.6rem 1.6rem' }}>
-            <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.95rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '-0.02em', marginBottom: '0.8rem' }}>
-              frostvista<span style={{ color: 'var(--red)' }}>_</span>os
-            </div>
-            <p style={{ color: 'var(--muted)', fontSize: '0.8rem', lineHeight: '1.7', maxWidth: '30ch' }}>
-              A compact RISC-V 64 (Sv39) kernel. Small system, real boundaries.
-            </p>
-          </div>
-          <FooterCol title="Pages" items={[
-            { label: 'docs', to: '/docs' },
-            { label: 'roadmap', to: '/roadmap' },
-            { label: 'changelog', to: '/changelog' },
-            { label: 'community', to: '/community' },
-          ]} />
-          <FooterCol title="Run" items={[
-            { label: 'build guide', to: '/docs' },
-            { label: 'shell demo', to: '/docs#shell' },
-            { label: 'test runner', to: '/docs#tests' },
-          ]} />
-          <div style={{ background: 'var(--bg)', padding: '1.6rem 1.6rem' }}>
-            <div className="eyebrow" style={{ marginBottom: '1rem' }}>Community</div>
-            <ul className="plain" style={{ fontSize: '0.8rem' }}>
-              <li>
-                <a href={site.discord} target="_blank" rel="noreferrer" className="anchor">
-                  discord_server
-                </a>
-              </li>
-              <li>
-                <a href={site.repo} target="_blank" rel="noreferrer" className="anchor">
-                  github_repo
-                </a>
-              </li>
-            </ul>
-          </div>
-        </div>
+      <div className="container" style={{ paddingTop: '0.9rem', paddingBottom: '0.9rem' }}>
         <div
           className="meta-line"
-          style={{ marginTop: '2rem', paddingTop: '1.2rem', borderTop: '1px solid var(--border)', justifyContent: 'space-between', flexWrap: 'wrap', rowGap: '0.5rem' }}
+          style={{ justifyContent: 'space-between', flexWrap: 'wrap', columnGap: '1.4rem', rowGap: '0.4rem' }}
         >
+          <span>
+            <span style={{ color: 'var(--ink)', fontWeight: 700, letterSpacing: '-0.01em' }}>
+              frostvista<span style={{ color: 'var(--red)' }}>_</span>os
+            </span>
+            <span style={{ color: 'var(--muted)' }}> / compact riscv64 (sv39) kernel</span>
+          </span>
           <span>
             <span className="k">arch</span> riscv64 / <span className="k">paging</span> sv39 /{' '}
             <span className="k">ver</span> {site.version}
           </span>
           <span>
-            <span className="k">license</span> MIT / <span className="k">status</span>{' '}
+            <span className="k">license</span> GPL-3.0 / <span className="k">status</span>{' '}
             <span style={{ color: 'var(--green)' }}>RUNNING</span>
           </span>
         </div>
       </div>
     </footer>
-  )
-}
-
-function FooterCol({ title, items }) {
-  return (
-    <div style={{ background: 'var(--bg)', padding: '1.6rem 1.6rem' }}>
-      <div
-        style={{
-          fontFamily: 'var(--font-mono)',
-          fontSize: '0.68rem',
-          fontWeight: 600,
-          letterSpacing: '0.14em',
-          textTransform: 'uppercase',
-          color: 'var(--faint)',
-          marginBottom: '1rem',
-        }}
-      >
-        {title}
-      </div>
-      <ul className="plain" style={{ fontSize: '0.8rem' }}>
-        {items.map((i) => (
-          <li key={i.label}>
-            <Link to={i.to} className="anchor">
-              {i.label}
-            </Link>
-          </li>
-        ))}
-      </ul>
-    </div>
   )
 }

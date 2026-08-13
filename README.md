@@ -10,7 +10,7 @@ Built with Vite + React (react-router-dom), styled as a tactical CRT-terminal in
 - `/docs` — Project layout, build & run in QEMU, fvsh shell, automated tests
 - `/roadmap` — Current (v1.4 signals) and past milestones
 - `/changelog` — Release notes
-- `/community` — Discord, source, acknowledgments, MIT license
+- `/community` — Discord, source, acknowledgments, GPL-3.0 license
 
 ## Develop
 

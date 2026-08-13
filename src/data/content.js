@@ -6,7 +6,7 @@ export const site = {
   discord: 'https://discord.gg/N8Ar3q5cSh',
   version: 'v1.3',
   arch: 'RISC-V 64 / Sv39',
-  license: 'MIT',
+  license: 'GPL-3.0',
 }
 
 export const bootLog = [
