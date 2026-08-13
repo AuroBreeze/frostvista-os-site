@@ -9,6 +9,7 @@ import Docs from './pages/Docs'
 import Roadmap from './pages/Roadmap'
 import Changelog from './pages/Changelog'
 import Community from './pages/Community'
+import Stats from './pages/Stats'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -23,6 +24,7 @@ createRoot(document.getElementById('root')).render(
             <Route path="/roadmap" element={<Roadmap />} />
             <Route path="/changelog" element={<Changelog />} />
             <Route path="/community" element={<Community />} />
+            <Route path="/stats" element={<Stats />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </main>

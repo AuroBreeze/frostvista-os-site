@@ -776,6 +776,135 @@ a.anchor:hover {
   height: 6px;
 }
 
+/* ---------- ASCII banner ---------- */
+
+.ascii {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: clamp(0.62rem, 2.1vw, 1.25rem);
+  line-height: 1.12;
+  letter-spacing: 0;
+  white-space: pre;
+  color: var(--ink);
+  user-select: none;
+}
+
+.ascii .a-green { color: var(--green); }
+.ascii .a-red { color: var(--red); }
+.ascii .a-dim { color: var(--muted); }
+
+/* ---------- Section head with ghost numeral ---------- */
+
+.sec-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 1.6rem;
+  margin-bottom: 2rem;
+}
+
+.sec-head__num {
+  font-family: var(--font-mono);
+  font-weight: 800;
+  font-size: clamp(3rem, 7vw, 4.6rem);
+  line-height: 0.85;
+  letter-spacing: -0.04em;
+  color: transparent;
+  -webkit-text-stroke: 1.5px var(--border-strong);
+  flex-shrink: 0;
+}
+
+.sec-head__num.red {
+  -webkit-text-stroke: 1.5px var(--red-dim);
+}
+
+.sec-head__body .eyebrow {
+  margin-bottom: 0.6rem;
+}
+
+/* ---------- Ticker ---------- */
+
+.ticker {
+  overflow: hidden;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-soft);
+}
+
+.ticker__track {
+  display: flex;
+  align-items: center;
+  gap: 2.5rem;
+  width: max-content;
+  white-space: nowrap;
+  animation: ticker-scroll 30s linear infinite;
+}
+
+.ticker:hover .ticker__track {
+  animation-play-state: paused;
+}
+
+.ticker__item {
+  display: flex;
+  align-items: center;
+  gap: 2.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.ticker__item .sep {
+  color: var(--red);
+}
+
+.ticker__item b {
+  color: var(--green);
+  font-weight: 700;
+}
+
+@keyframes ticker-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ticker__track {
+    animation: none;
+    flex-wrap: wrap;
+  }
+}
+
+/* ---------- Philosophy numbered rows ---------- */
+
+.phil-row {
+  display: grid;
+  grid-template-columns: 88px 1fr;
+  border-top: 1px solid var(--border);
+  padding: 1.6rem 0;
+  align-items: start;
+}
+
+.phil-row:last-child {
+  border-bottom: 1px solid var(--border);
+}
+
+.phil-row__num {
+  font-family: var(--font-mono);
+  font-weight: 800;
+  font-size: 2rem;
+  line-height: 1;
+  color: var(--faint);
+}
+
+.phil-row:hover .phil-row__num {
+  color: var(--red);
+}
+
 .meta-line {
   display: flex;
   align-items: center;

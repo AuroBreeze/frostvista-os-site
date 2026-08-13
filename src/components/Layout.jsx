@@ -4,6 +4,7 @@ import { site } from '../data/content'
 const links = [
   { to: '/', label: 'home' },
   { to: '/docs', label: 'docs' },
+  { to: '/stats', label: 'stats' },
   { to: '/roadmap', label: 'roadmap' },
   { to: '/changelog', label: 'changelog' },
   { to: '/community', label: 'community' },

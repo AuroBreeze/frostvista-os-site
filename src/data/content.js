@@ -2,7 +2,7 @@ export const site = {
   name: 'FrostVista OS',
   cnName: '霜见内核',
   tagline: 'A compact RISC-V 64 (Sv39) kernel',
-  repo: 'https://github.com/',
+  repo: 'https://github.com/AuroBreeze/FrostVistaOS',
   discord: 'https://discord.gg/N8Ar3q5cSh',
   version: 'v1.3',
   arch: 'RISC-V 64 / Sv39',

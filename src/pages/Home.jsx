@@ -1,7 +1,9 @@
 ﻿import { Link } from 'react-router-dom'
 import Reveal from '../components/Reveal'
 import CodeBlock from '../components/CodeBlock'
-import { bootLog, philosophy, features, site } from '../data/content'
+import SectionHead from '../components/SectionHead'
+import Ticker from '../components/Ticker'
+import { philosophy, features, site } from '../data/content'
 
 const tagClasses = {
   blue: 'tag--neutral',
@@ -10,6 +12,14 @@ const tagClasses = {
   red: 'tag--red',
   yellow: 'tag--amber',
 }
+
+const banner = [
+  '    ______                __ _    ___      __       ',
+  '   / ____/________  _____/ /| |  / (_)____/ /_____ _ ',
+  '  / /_  / ___/ __ \\/ ___/ __/ | / / / ___/ __/ __ `/',
+  ' / __/ / /  / /_/ (__  ) /_ | |/ / (__  ) /_/ /_/ / ',
+  '/_/   /_/   \\____/____/\\__/ |___/_/____/\\__/\\__,_/',
+]
 
 const telemetry = [
   { k: 'ARCH', v: 'riscv64' },
@@ -24,6 +34,7 @@ export default function Home() {
   return (
     <>
       <Hero />
+      <Ticker />
       <TelemetryStrip />
       <Philosophy />
       <Features />
@@ -35,52 +46,57 @@ export default function Home() {
 
 function Hero() {
   return (
-    <section className="section" style={{ paddingTop: '3.2rem', paddingBottom: '2.8rem' }}>
-      <div className="container">
-        <div style={{ display: 'grid', gridTemplateColumns: '1.05fr 0.95fr', gap: '2.5rem', alignItems: 'start' }}>
-          <div>
-            <Reveal>
-              <div className="eyebrow" style={{ marginBottom: '1rem' }}>
-                kernel / riscv64 / boot sequence
-              </div>
-              <h1 style={{ fontSize: 'clamp(2.4rem, 6vw, 4.6rem)', lineHeight: '0.92', marginBottom: '1.15rem' }}>
-                FROSTVISTA
-                <br />
-                <span style={{ color: 'var(--red)' }}>OS</span>
-                <span className="cursor" style={{ color: 'var(--green)', animation: 'blink 1.1s steps(2, start) infinite' }}>_</span>
-              </h1>
-            </Reveal>
-            <Reveal delay={90}>
-              <p className="lede" style={{ marginBottom: '1.1rem' }}>
-                A compact RISC-V 64 kernel shaped by a simple idea:{' '}
-                <span style={{ color: 'var(--ink)', fontWeight: 700 }}>keep the system small,
-                but let every boundary be real.</span>
-              </p>
-              <p className="lede">
-                Built for learning, experimentation, and small embedded-style
-                environments. Every path — boot, run, read, write, fail — is real.
-              </p>
-            </Reveal>
-            <Reveal delay={160}>
-              <div style={{ display: 'flex', gap: '0.8rem', marginTop: '1.5rem', flexWrap: 'wrap' }}>
-                <Link to="/docs" className="btn btn--solid">
-                  boot it now
-                </Link>
-                <Link to="/roadmap" className="btn btn--ghost">
-                  view roadmap
-                </Link>
-              </div>
-            </Reveal>
+    <section
+      className="section"
+      style={{
+        minHeight: 'calc(100vh - 58px)',
+        display: 'flex',
+        alignItems: 'center',
+        paddingTop: '3rem',
+        paddingBottom: '3rem',
+      }}
+    >
+      <div className="container" style={{ width: '100%', textAlign: 'center' }}>
+        <Reveal>
+          <div className="ascii" style={{ display: 'inline-block', textAlign: 'left' }}>
+            {banner.map((l) => (
+              <div key={l} dangerouslySetInnerHTML={{ __html: l }} />
+            ))}
           </div>
-
-          <Reveal delay={200}>
-            <CodeBlock title="serial console / fvsh" lines={bootLog} />
-            <div style={{ marginTop: '0.6rem', display: 'flex', justifyContent: 'space-between', fontFamily: 'var(--font-mono)', fontSize: '0.68rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--faint)' }}>
-              <span>ttyS0 路 115200 baud</span>
-              <span style={{ color: 'var(--green)' }}>[OK] boot complete</span>
-            </div>
-          </Reveal>
-        </div>
+        </Reveal>
+        <Reveal delay={120}>
+          <h1
+            style={{
+              fontSize: 'clamp(2.2rem, 6vw, 4rem)',
+              margin: '2rem 0 1.2rem',
+              letterSpacing: '-0.04em',
+            }}
+          >
+            FROSTVISTA<span style={{ color: 'var(--red)' }}>_</span>OS
+            <span style={{ color: 'var(--green)', animation: 'blink 1.1s steps(2, start) infinite' }}>_</span>
+          </h1>
+          <p className="lede" style={{ margin: '0 auto' }}>
+            A compact RISC-V 64 kernel shaped by a simple idea:{' '}
+            <span style={{ color: 'var(--ink)', fontWeight: 700 }}>keep the system small,
+            but let every boundary be real.</span>
+          </p>
+        </Reveal>
+        <Reveal delay={200}>
+          <div style={{ display: 'flex', gap: '0.8rem', marginTop: '2rem', justifyContent: 'center', flexWrap: 'wrap' }}>
+            <Link to="/docs" className="btn btn--solid">
+              boot it now
+            </Link>
+            <a href={site.repo} target="_blank" rel="noreferrer" className="btn btn--ghost">
+              view source
+            </a>
+            <Link to="/roadmap" className="btn btn--ghost">
+              view roadmap
+            </Link>
+            <a href={site.discord} target="_blank" rel="noreferrer" className="btn btn--ghost">
+              join discord
+            </a>
+          </div>
+        </Reveal>
       </div>
     </section>
   )
@@ -112,27 +128,24 @@ function TelemetryStrip() {
 function Philosophy() {
   return (
     <section className="section">
-      <div className="container">
+      <div className="container container--narrow">
         <Reveal>
-          <div className="eyebrow">philosophy / design principles</div>
-          <h2 style={{ maxWidth: '18ch', marginBottom: '1.15rem' }}>
-            SMALL CODE. CLEAR SHAPE. <span style={{ color: 'var(--red)' }}>REAL</span> BEHAVIOR.
-          </h2>
+          <SectionHead num="01" eyebrow="philosophy / design principles" red>
+            SMALL CODE. CLEAR SHAPE.{' '}
+            <span style={{ color: 'var(--red)' }}>REAL</span> BEHAVIOR.
+          </SectionHead>
         </Reveal>
-        <div className="grid-seam" style={{ gridTemplateColumns: 'repeat(3, 1fr)' }}>
-          {philosophy.map((p, i) => (
-            <div key={p.title} style={{ padding: '1.15rem 1.2rem' }}>
-              <Reveal delay={i * 70}>
-                <div className="meta-line" style={{ marginBottom: '1rem' }}>
-                  <span style={{ color: 'var(--red)' }}>UNIT / 0{i + 1}</span>
-                  <span className="k">:: {p.title.toLowerCase().replace(/\s+/g, '_')}</span>
-                </div>
-                <h3 style={{ marginBottom: '0.7rem' }}>{p.title}</h3>
-                <p style={{ color: 'var(--muted)', fontSize: '0.85rem', lineHeight: '1.7' }}>{p.body}</p>
-              </Reveal>
+        {philosophy.map((p, i) => (
+          <Reveal key={p.title} direction={i % 2 === 0 ? 'left' : 'right'} delay={i * 40}>
+            <div className="phil-row">
+              <div className="phil-row__num">0{i + 1}</div>
+              <div>
+                <h3 style={{ marginBottom: '0.5rem' }}>{p.title}</h3>
+                <p style={{ color: 'var(--muted)', fontSize: '0.9rem', lineHeight: '1.7' }}>{p.body}</p>
+              </div>
             </div>
-          ))}
-        </div>
+          </Reveal>
+        ))}
       </div>
     </section>
   )
@@ -143,14 +156,15 @@ function Features() {
     <section className="section">
       <div className="container">
         <Reveal>
-          <div className="eyebrow">capabilities / subsystems</div>
-          <h2 style={{ marginBottom: '1.15rem' }}>WHAT THE KERNEL <span style={{ color: 'var(--red)' }}>ACTUALLY</span> DOES</h2>
+          <SectionHead num="02" eyebrow="capabilities / subsystems">
+            WHAT THE KERNEL <span style={{ color: 'var(--red)' }}>ACTUALLY</span> DOES
+          </SectionHead>
         </Reveal>
         <div className="grid-seam" style={{ gridTemplateColumns: 'repeat(3, 1fr)' }}>
           {features.map((f, i) => (
-            <div key={f.title} style={{ padding: '1.1rem 1.15rem', display: 'flex', flexDirection: 'column', gap: '0.7rem' }}>
+            <div key={f.title} style={{ padding: '1.4rem 1.4rem', display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
               <Reveal delay={(i % 3) * 80} className="h-full">
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.7rem', height: '100%' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem', height: '100%' }}>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                     <span className={`tag ${tagClasses[f.tagColor] || 'tag--neutral'}`}>{f.tag}</span>
                     <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.62rem', color: 'var(--faint)', letterSpacing: '0.1em' }}>
@@ -158,7 +172,7 @@ function Features() {
                     </span>
                   </div>
                   <h3 style={{ fontSize: '1.05rem', lineHeight: '1.15' }}>{f.title}</h3>
-                  <p style={{ color: 'var(--muted)', fontSize: '0.83rem', lineHeight: '1.7' }}>{f.body}</p>
+                  <p style={{ color: 'var(--muted)', fontSize: '0.85rem', lineHeight: '1.7' }}>{f.body}</p>
                 </div>
               </Reveal>
             </div>
@@ -173,17 +187,20 @@ function Boot() {
   return (
     <section className="section">
       <div className="container">
+        <Reveal>
+          <SectionHead num="03" eyebrow="from power-on to prompt">
+            A BOOT YOU CAN <span style={{ color: 'var(--green)' }}>READ</span>
+          </SectionHead>
+        </Reveal>
         <div style={{ display: 'grid', gridTemplateColumns: '0.85fr 1.15fr', gap: '2.5rem', alignItems: 'center' }}>
           <div>
-            <Reveal>
-              <div className="eyebrow">from power-on to prompt</div>
-              <h2 style={{ marginBottom: '1rem' }}>A BOOT YOU CAN <span style={{ color: 'var(--green)' }}>READ</span></h2>
+            <Reveal direction="left">
               <p className="lede">
                 Paging on. Timer ticking. Memory counted. A hello from the kernel,
                 then a filesystem and a shell. Every line is a real step on a real
                 path — no stubs, no placeholders.
               </p>
-              <ul className="checklist" style={{ marginTop: '1.2rem', fontSize: '0.85rem' }}>
+              <ul className="checklist" style={{ marginTop: '1.4rem', fontSize: '0.85rem' }}>
                 <li>Sv39 paging enabled on RISC-V 64</li>
                 <li>Physical memory allocator initialized</li>
                 <li>VirtIO block device online</li>
@@ -191,7 +208,7 @@ function Boot() {
               </ul>
             </Reveal>
           </div>
-          <Reveal delay={140}>
+          <Reveal direction="right" delay={100}>
             <CodeBlock
               title="kernel boot / quick look"
               lines={[
@@ -213,13 +230,15 @@ function Boot() {
 
 function Cta() {
   return (
-    <section className="section" style={{ paddingBottom: '2.8rem' }}>
+    <section className="section" style={{ paddingBottom: '3.5rem' }}>
       <div className="container">
         <Reveal>
           <div style={{ border: '1px solid var(--border)', background: 'var(--bg-soft)' }}>
             <div className="hazard" />
-            <div style={{ padding: '2rem 1.8rem', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem' }}>
-              <div className="eyebrow" style={{ justifyContent: 'center' }}>get started / one command</div>
+            <div style={{ padding: '2.4rem 2.2rem', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1.3rem' }}>
+              <div className="eyebrow" style={{ justifyContent: 'center' }}>
+                get started / one command
+              </div>
               <h2 style={{ fontSize: 'clamp(1.8rem, 4vw, 2.8rem)' }}>
                 BOOT IT. <span style={{ color: 'var(--red)' }}>NOW.</span>
               </h2>
@@ -239,6 +258,9 @@ function Cta() {
                 <Link to="/docs" className="btn btn--solid">
                   read the docs
                 </Link>
+                <a href={site.repo} target="_blank" rel="noreferrer" className="btn btn--ghost">
+                  view source
+                </a>
                 <a href={site.discord} target="_blank" rel="noreferrer" className="btn btn--ghost">
                   join discord
                 </a>
