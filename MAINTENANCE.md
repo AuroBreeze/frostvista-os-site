@@ -85,3 +85,5 @@
 - 目标：`AuroBreeze.github.io`（根域名，vite base 保持 `/`）
 - 本地预览：`npm run dev`
 - 本地构建验证：`npm run build` + `npm run lint`
+
+---
