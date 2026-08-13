@@ -232,6 +232,165 @@ export const roadmapPast = [
       'syscalls: fcntl/clock_gettime (riscv64 ABI 113), readv/writev',
     ],
   },
+  {
+    version: 'v1.2',
+    title: 'The Consolidation & Understanding Declaration',
+    summary:
+      'Not a feature milestone — a declaration of intent. v1.2 ends the contest-era push and begins an open-ended maintenance period: re-read what was written in haste, correct what is wrong, remove what exists only to pass a test, and write down what was left implicit.',
+    points: [
+      'Retire contest-era shortcuts: paths added only for the evaluator are rebuilt or removed',
+      'Close open workarounds, including the spurious S-mode external interrupt root-cause',
+      'Audit for correctness, not just behavior: lock contracts, error paths, lifetimes, VMA semantics',
+      'Write for the reader, not the grader: the kernel should read as a learning artifact',
+    ],
+  },
+  {
+    version: 'v1.1',
+    title: 'Virtual Memory Semantics & mmap Milestone',
+    summary:
+      'Makes the user address space model explicit and extensible: VMA tracking, anonymous mmap, munmap, lazy page-fault allocation, and minimal file-backed mappings — a clean VM foundation for future libc, loader, and process work.',
+    points: [
+      'VMA records per process with range/overlap helpers and lifecycle boundaries across fork/exec/exit',
+      'Six-argument mmap ABI wired end-to-end: sys_mmap -> do_mmap, anonymous private mappings',
+      'Lazy allocation: touched anonymous VMA pages allocated and zero-filled on demand',
+      'munmap: whole-VMA unmap, edge trimming, safe PTE teardown, middle splits deferred',
+      'fork copies VMA metadata and materialized pages while keeping lazy ranges lazy',
+      'File-backed private read-only mappings with held file references',
+      'Validation: mmap, mmap_lazy, mmap_exit, mmap_fork, mmap_file all PASS',
+    ],
+  },
+  {
+    version: 'v1.0',
+    title: 'Interactive Shell Milestone',
+    summary:
+      'Turns FrostVista from a test-driven kernel into a small interactive Unix-style environment: fork, exec, wait, pipes, and devtmpfs-backed console I/O come together in the first FrostVista shell (fvsh).',
+    points: [
+      'fvsh as a user program: prompt, line input, command dispatch, clean exit',
+      'Built-ins: help, exit, pwd, cd with visible failure reporting',
+      'External execution: fork -> exec -> wait for foreground programs, stdio preserved across exec',
+      'Redirection (cmd > file, cmd < file) via open/close/dup3 and one pipeline cmd1 | cmd2',
+      'Scripted shell tests: test_fvsh_script feeds commands from an array',
+    ],
+  },
+  {
+    version: 'v0.9',
+    title: 'Easy-FS Completion & Writable VFS Milestone',
+    summary:
+      'Makes the local Easy-FS backend a reliable writable filesystem, and exceeds scope by adding single-indirect and double-indirect block mapping for large files. EXT4 stays the read-only contest image path.',
+    points: [
+      'VFS write contract: open flags, file offset rules, backend capability separation',
+      'Easy-FS file writes: create, write, append, truncate, cross-block writes',
+      'Directory ops: safe dirent allocation, unlink, mkdir, hardened path edges',
+      'Persistence tests: reopen-after-close, multi-file allocation, truncate/append, unlink',
+      'Final inode layout: 10 direct + single-indirect + double-indirect slots in 64-byte inode',
+      'Expanded test suite: open, easyfs_maxfile, indirect, double_indirect, itrunc, unlink, mkdir',
+    ],
+  },
+  {
+    version: 'v0.8',
+    title: 'Pipe & Unix IPC Milestone',
+    summary:
+      'The first real Unix-style IPC path, centered on anonymous pipes — and the file descriptor, file object, blocking I/O, and process lifecycle behavior that pipes require.',
+    points: [
+      'File object dispatch: descriptors can refer to VFS nodes or pipe endpoints',
+      'Bounded in-kernel ring buffer with blocking reads/writes via scheduler sleep/wakeup',
+      'EOF and broken-pipe handling when endpoints disappear',
+      'pipe2 syscall with safe failure rollback on partial allocation',
+      'fork inheritance, close/dup lifetime extension, wait/exit preservation',
+      'Full-buffer wakeup test plus endpoint lifecycle coverage',
+    ],
+  },
+  {
+    version: 'v0.7',
+    title: 'Filesystem Architecture & Device Model Milestone',
+    summary:
+      'Architectural milestone: separates generic VFS behavior from filesystem-specific details, introduces devtmpfs as a real device filesystem, and retires the temporary mock /dev/tty path.',
+    points: [
+      'VFS boundary cleanup: traversal, fd dispatch, mount points stay generic; backends behind op tables',
+      'Easy-FS self-contained; EXT4 formalized as a read-only backend',
+      'devtmpfs introduced; /dev/tty becomes a real device node via normal pathname lookup',
+      'Root filesystem and /dev may come from different backends; boot paths preserved',
+    ],
+  },
+  {
+    version: 'v0.6',
+    title: 'Contest Bootstrapping Milestone',
+    summary:
+      'Boots the kernel in the contest evaluator: OpenSBI S-mode entry, read-only EXT4 reader, ELF loading from the contest disk, a serial contest runner, and syscall fill driven by failing tests.',
+    points: [
+      'OpenSBI entry (-bios default -kernel kernel-rv) while keeping local -bios none dev boots',
+      'Minimal read-only EXT4: superblock probe, group descriptors, root inode, extent reads',
+      'Reader-based ELF loader feeding either Easy-FS or EXT4-backed files',
+      'Serial contest runner with basic-musl markers and SBI SRST shutdown',
+      'Syscall fill: brk, getpid, fork, wait, openat, dup3, and more; ABI numbers for later batches',
+      'tp restoration for musl user TLS, kalloc_init access-fault fix, DRAM/kernel base split',
+      'BusyBox reaches syscall dispatch to expose the next missing coverage',
+    ],
+  },
+  {
+    version: 'v0.5',
+    title: 'The Cleanup & Consolidation Milestone',
+    summary:
+      'No new features — a pure quality milestone. Tears down development scaffolding, unifies the codebase under a single architecture, and eliminates magic numbers.',
+    points: [
+      'VFS debt tracking: mock tree scoped, deferred open() unification until devtmpfs',
+      'Named constants replace magic numbers for FS layout, path buffers, syscall offsets, printf',
+      'Code quality: typos, log-level audit, dead declarations removed, inode lifecycle fixes',
+      'exec() cleanup hardening and Easy-FS inode cleanup hazard fixes',
+      'Lock contracts and buffer cache ownership documented',
+    ],
+  },
+  {
+    version: 'v0.4',
+    title: 'The File System & I/O Milestone',
+    summary:
+      'Breaks out of the memory island: a Virtual File System, VirtIO block driver with LRU buffer cache, and the Easy-FS backend — plus standard file descriptors and core Unix I/O syscalls.',
+    points: [
+      'VFS abstraction: generic inode/file/superblock; per-process fd table',
+      'Core I/O syscalls: open, read, write, close, dup',
+      'VirtIO block device driver with interrupt-driven async disk I/O',
+      'LRU buffer cache with spinlock/sleeplock protected concurrent access',
+      'Easy-FS: superblock, block bitmap, inode array, data blocks, directories, file mapping',
+      'stdin/stdout/stderr linked to the UART console',
+    ],
+  },
+  {
+    version: 'v0.3',
+    title: 'The Userland & Lifecycle Milestone',
+    summary:
+      'True Unix process semantics, ELF executable loading, dynamic user memory, and kernel concurrency protection — transforms FrostVista from a task switcher into an application host.',
+    points: [
+      'Process lifecycle: fork deep-copy, exit teardown to ZOMBIE, wait reaping, orphan reparenting',
+      'ELF parser and sys_execve loader with .text/.data/.bss mapping and user stack init',
+      'sys_sbrk heap expansion, memory accounting, lazy page-fault allocation',
+      'Spinlocks via amoswap, push_off/pop_off interrupt control, sleep & wakeup primitives',
+    ],
+  },
+  {
+    version: 'v0.2',
+    title: 'The Architecture & Process Milestone',
+    summary:
+      'Architectural decoupling, multitasking, and the user/supervisor bridge: hardware abstraction, syscall infrastructure, the process control block, and preemptive scheduling.',
+    points: [
+      'HAL decouples generic logic from RISC-V specifics; kernel/ and arch/riscv/ split',
+      'Syscall dispatcher via ecall and a7 routing; first true syscall sys_write',
+      'struct Process PCB: state, PID, page tables, kernel stacks; context isolation via Trapframes',
+      'Timer interrupts finalized, swtch.S context switcher, round-robin scheduler',
+    ],
+  },
+  {
+    version: 'v0.1',
+    title: 'The Memory Milestone',
+    summary:
+      'Self-hosted memory management foundation: UART serial output, Sv39 three-level paging, the higher-half kernel mapping leap of faith, and the first privilege drop to user mode.',
+    points: [
+      'UART driver for serial logging; bump-pointer boot allocator (ekalloc)',
+      'Sv39 paging fully implemented; kernel mapped to 0xFFFFFFC080000000',
+      'The leap of faith: deterministic transition from physical PC to high-virtual PC',
+      'Identity mapping destroyed after boot; memory semantics annotated across core functions',
+      'Mini user mode: first S -> U privilege drop; UART interrupts enabled',
+    ],
+  },
 ]
 
 export const changelog = [
