@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import useLatestVersion from '../hooks/useLatestVersion'
 
 const BOOT = [
   '[   0.094] [ INFO] Paging enable successfully',
@@ -28,7 +29,7 @@ const FS = {
       init: '#!/bin/init\n[ OK ] FrostVista initialized',
       echo: 'usage: echo <text>',
       cat: 'usage: cat <file>',
-      fvsh: 'FrostVista Shell v1.3',
+      fvsh: 'FrostVista Shell',
     },
   },
   '/dev': { dirs: [], files: { console: 'tty device', null: 'null device' } },
@@ -53,6 +54,8 @@ function exists(path) {
 }
 
 export default function InteractiveTerminal() {
+  const { version } = useLatestVersion()
+  const ver = version || 'v1.3'
   const [lines, setLines] = useState(BOOT)
   const [input, setInput] = useState('')
   const [cwd, setCwd] = useState('/')
@@ -92,7 +95,7 @@ export default function InteractiveTerminal() {
         setLines([])
         return
       case 'uname':
-        push(['FrostVista v1.3  riscv64  sv39'])
+        push([`FrostVista ${ver}  riscv64  sv39`])
         break
       case 'ls': {
         const path = resolve(cwd, arg) || normalize(cwd)

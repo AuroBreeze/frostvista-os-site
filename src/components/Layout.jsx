@@ -1,5 +1,6 @@
 import { NavLink, Link } from 'react-router-dom'
 import { site } from '../data/content'
+import useLatestVersion from '../hooks/useLatestVersion'
 
 const links = [
   { to: '/', label: 'home' },
@@ -68,6 +69,8 @@ export function Nav() {
 }
 
 export function Footer() {
+  const { version } = useLatestVersion()
+  const ver = version || site.version
   return (
     <footer style={{ borderTop: '1px solid var(--border)', background: 'var(--bg-soft)' }}>
       <div style={{ height: 6 }} className="hazard" />
@@ -84,7 +87,7 @@ export function Footer() {
           </span>
           <span>
             <span className="k">arch</span> riscv64 / <span className="k">paging</span> sv39 /{' '}
-            <span className="k">ver</span> {site.version}
+            <span className="k">ver</span> {ver}
           </span>
           <span>
             <span className="k">license</span> GPL-3.0 / <span className="k">status</span>{' '}

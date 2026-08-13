@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import Reveal from '../components/Reveal'
+import useLatestVersion from '../hooks/useLatestVersion'
 import { roadmapCurrent, roadmapPast } from '../data/content'
 
 export default function Roadmap() {
@@ -129,6 +130,8 @@ function CurrentMilestone() {
 
 function PastMilestones() {
   const [sel, setSel] = useState(0)
+  const { version } = useLatestVersion()
+  const latest = version || 'v1.3'
   const m = roadmapPast[sel]
 
   return (
@@ -140,7 +143,7 @@ function PastMilestones() {
             MILESTONES THAT <span style={{ color: 'var(--green)' }}>LANDED</span>
           </h2>
           <p className="lede" style={{ marginTop: '1.1rem' }}>
-            {roadmapPast.length} releases shipped from v0.1 to v1.3. Pick one to inspect.
+            {roadmapPast.length} releases shipped from v0.1 to {latest}. Pick one to inspect.
           </p>
         </Reveal>
 
