@@ -1,0 +1,57 @@
+{
+  "schemaVersion": 2,
+  "version": "v1.4",
+  "title": "Signals & Interactive Terminal Milestone",
+  "status": "in_progress",
+  "summary": "v1.4 brings FrostVista its first real signal subsystem: the missing half of the process model.",
+  "scope": "This milestone does not aim to implement full POSIX signal semantics, real-time signal queues, sigaltstack, ptrace, core dumps, per-thread signal masks, or job-control process groups.",
+  "phases": [
+    {
+      "id": "phase-1",
+      "title": "Kernel Signal Skeleton",
+      "items": [
+        { "id": "process-signal-state", "title": "Process signal state", "description": "Process signal state and fork inheritance.", "status": "complete" },
+        { "id": "signal-primitives", "title": "Signal primitives", "description": "Signal registration and signal mask basics.", "status": "complete" },
+        { "id": "kill-syscall", "title": "kill syscall", "description": "Set pending signals and wake sleeping targets.", "status": "complete" },
+        { "id": "rt-sigpending", "title": "rt_sigpending", "description": "Query the pending signal mask.", "status": "planned" }
+      ],
+      "status": "in_progress"
+    },
+    {
+      "id": "phase-2",
+      "title": "Delivery and Return",
+      "items": [
+        { "id": "signal-delivery-checkpoint", "title": "Signal delivery checkpoint", "description": "Check pending signals before returning to user mode.", "status": "complete" },
+        { "id": "sigframe-handler-entry", "title": "sigframe and handler entry", "description": "Build a RISC-V sigframe and enter the handler.", "status": "complete" },
+        { "id": "sigreturn", "title": "sigreturn", "description": "Restore the saved trapframe and signal mask.", "status": "complete" },
+        { "id": "riscv-musl-abi", "title": "ABI alignment", "description": "Use the RISC-V and musl handler conventions.", "status": "complete" }
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "phase-3",
+      "title": "Interactive Terminal",
+      "items": [
+        { "id": "user-signal-wiring", "title": "User-side wiring", "description": "Provide user signal wrappers and the restore stub.", "status": "complete" },
+        { "id": "ctrl-c-fvsh", "title": "Ctrl+C in fvsh", "description": "Raise SIGINT from the interactive shell.", "status": "planned" },
+        { "id": "faults-as-signals", "title": "Faults become signals", "description": "Turn unhandled page faults into process signals.", "status": "planned" }
+      ],
+      "status": "in_progress"
+    },
+    {
+      "id": "phase-4",
+      "title": "Regression Tests",
+      "items": [
+        { "id": "signal-lifecycle", "title": "Signal lifecycle", "description": "Test signal delivery and return-to-workflow.", "status": "complete" },
+        { "id": "ctrl-c-shell-test", "title": "Ctrl+C shell behavior", "description": "Verify the shell survives an interrupted command.", "status": "planned" },
+        { "id": "fault-to-signal-test", "title": "Fault-to-signal", "description": "Verify SIGSEGV kills only the faulting process.", "status": "planned" }
+      ],
+      "status": "in_progress"
+    }
+  ],
+  "validation": [
+    { "command": "python3 ./scripts/run_tests.py -t signal -T 20", "expected": "PASS", "status": "not_run" },
+    { "command": "python3 ./scripts/run_tests.py -t fvsh_sigint -T 20", "expected": "PASS", "status": "not_run" },
+    { "command": "Existing full suite still passes with signal delivery enabled.", "expected": "PASS", "status": "not_run" }
+  ]
+}

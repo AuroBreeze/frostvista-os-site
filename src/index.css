@@ -640,6 +640,102 @@ ul.plain li::before {
   font-weight: 700;
 }
 
+.release-markdown {
+  color: var(--ink-soft);
+  font-size: 0.86rem;
+  line-height: 1.75;
+}
+
+.release-markdown p {
+  margin: 0 0 1rem;
+}
+
+.release-markdown h1,
+.release-markdown h2,
+.release-markdown h3 {
+  color: var(--ink);
+  margin: 1.4rem 0 0.65rem;
+}
+
+.release-markdown h1 { font-size: 1.3rem; }
+.release-markdown h2 { font-size: 1.1rem; }
+.release-markdown h3 { font-size: 0.95rem; }
+
+.release-markdown ul {
+  margin: 0 0 1rem;
+}
+
+.release-markdown pre {
+  overflow-x: auto;
+  margin: 0 0 1rem;
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--border);
+  background: var(--bg-soft);
+  color: var(--green);
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  line-height: 1.6;
+}
+
+.roadmap-items {
+  list-style: none;
+}
+
+.roadmap-items > li {
+  position: relative;
+  padding: 0.15rem 0 0.85rem 1.3rem;
+  margin-bottom: 0.75rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.roadmap-items > li:last-child {
+  margin-bottom: 0;
+  border-bottom: none;
+}
+
+.roadmap-items > li::before {
+  content: '▸';
+  position: absolute;
+  top: 0.15rem;
+  left: 0;
+  color: var(--red);
+}
+
+.roadmap-items > li[data-status='complete']::before {
+  content: '✓';
+  color: var(--green);
+}
+
+.roadmap-item__title {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.roadmap-item__status {
+  flex-shrink: 0;
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  font-weight: 400;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.roadmap-items > li[data-status='complete'] .roadmap-item__status {
+  color: var(--green);
+}
+
+.roadmap-item__description {
+  margin: 0.2rem 0 0;
+  color: var(--ink-soft);
+  font-size: 0.78rem;
+  line-height: 1.65;
+}
+
 /* ---------- Grid seam technique ---------- */
 
 .grid-seam {

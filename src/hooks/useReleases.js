@@ -31,6 +31,7 @@ function mergeLive(liveReleases) {
       version: r.tag_name,
       title: r.name || r.tag_name,
       summary: (r.body || '').split('\n')[0] || 'See the release on GitHub.',
+      body: r.body || '',
       points: parseBody(r.body),
       publishedAt: r.published_at,
       htmlUrl: r.html_url,

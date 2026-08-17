@@ -38,4 +38,6 @@ npm run lint    # oxlint
 npm run preview # serve the production build
 ```
 
-Content lives in `src/data/content.js`, sourced from the kernel repo's README / releases.md / CHANGELOG.md.
+Static content lives in `src/data/content.js`. The current roadmap is fetched
+from the kernel repo's generated `website-data/roadmap.json`, with
+`src/data/roadmapFallback.json` used when the network is unavailable.

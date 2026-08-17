@@ -20,6 +20,109 @@ function relTime(iso) {
   return `${Math.floor(months / 12)} yr ago`
 }
 
+function inlineMarkdown(text, keyPrefix) {
+  const pattern = /(\*\*[^*]+\*\*|`[^`]+`|\[[^\]]+\]\([^)]+\))/g
+  const parts = String(text).split(pattern)
+
+  return parts.map((part, i) => {
+    const key = `${keyPrefix}-${i}`
+    if (part.startsWith('**') && part.endsWith('**')) {
+      return <strong key={key}>{part.slice(2, -2)}</strong>
+    }
+    if (part.startsWith('`') && part.endsWith('`')) {
+      return <code key={key} className="inline">{part.slice(1, -1)}</code>
+    }
+    const link = part.match(/^\[([^\]]+)\]\(([^)]+)\)$/)
+    if (link) {
+      return <a key={key} className="anchor" href={link[2]} target="_blank" rel="noreferrer">{link[1]}</a>
+    }
+    return part
+  })
+}
+
+function MarkdownBody({ source }) {
+  const lines = String(source || '').replace(/\r\n/g, '\n').split('\n')
+  const blocks = []
+  let paragraph = []
+  let list = []
+  let code = []
+  let inCode = false
+
+  const flushParagraph = () => {
+    if (paragraph.length) {
+      blocks.push({ type: 'p', lines: paragraph })
+      paragraph = []
+    }
+  }
+  const flushList = () => {
+    if (list.length) {
+      blocks.push({ type: 'ul', lines: list })
+      list = []
+    }
+  }
+
+  lines.forEach((line) => {
+    if (line.trim().startsWith('```')) {
+      if (inCode) {
+        blocks.push({ type: 'code', lines: code })
+        code = []
+      } else {
+        flushParagraph()
+        flushList()
+      }
+      inCode = !inCode
+      return
+    }
+    if (inCode) {
+      code.push(line)
+      return
+    }
+
+    const item = line.match(/^\s*[-*+]\s+(.+)$/)
+    if (item) {
+      flushParagraph()
+      list.push(item[1])
+      return
+    }
+    if (!line.trim()) {
+      flushParagraph()
+      flushList()
+      return
+    }
+    if (/^#{1,3}\s+/.test(line)) {
+      flushParagraph()
+      flushList()
+      const match = line.match(/^(#{1,3})\s+(.+)$/)
+      blocks.push({ type: `h${match[1].length}`, lines: [match[2]] })
+      return
+    }
+    flushList()
+    paragraph.push(line.trim())
+  })
+
+  if (inCode) blocks.push({ type: 'code', lines: code })
+  flushParagraph()
+  flushList()
+
+  return (
+    <div className="release-markdown">
+      {blocks.map((block, i) => {
+        if (block.type === 'code') {
+          return <pre key={i}><code>{block.lines.join('\n')}</code></pre>
+        }
+        if (block.type === 'ul') {
+          return <ul key={i} className="checklist">{block.lines.map((line, j) => <li key={j}>{inlineMarkdown(line, `${i}-${j}`)}</li>)}</ul>
+        }
+        if (block.type === 'h1' || block.type === 'h2' || block.type === 'h3') {
+          const Heading = block.type
+          return <Heading key={i}>{inlineMarkdown(block.lines[0], `${i}-heading`)}</Heading>
+        }
+        return <p key={i}>{inlineMarkdown(block.lines.join(' '), `${i}-paragraph`)}</p>
+      })}
+    </div>
+  )
+}
+
 export default function Changelog() {
   const { releases, loading, live, error } = useReleases()
   const [sel, setSel] = useState(() => (releases.length ? releases.length - 1 : 0))
@@ -126,13 +229,13 @@ export default function Changelog() {
                   <p style={{ color: 'var(--ink-soft)', fontSize: '0.92rem', lineHeight: '1.75', marginBottom: '1.4rem' }}>
                     {current.summary}
                   </p>
-                  {(current.points || []).length > 0 && (
-                    <ul className="checklist" style={{ fontSize: '0.86rem', lineHeight: '1.7' }}>
-                      {current.points.map((p, i) => (
-                        <li key={i}>{p}</li>
-                      ))}
-                    </ul>
-                  )}
+                   {current.body ? <MarkdownBody source={current.body} /> : (
+                     (current.points || []).length > 0 && (
+                       <ul className="checklist" style={{ fontSize: '0.86rem', lineHeight: '1.7' }}>
+                         {current.points.map((p, i) => <li key={i}>{p}</li>)}
+                       </ul>
+                     )
+                   )}
                 </div>
               </div>
             </Reveal>

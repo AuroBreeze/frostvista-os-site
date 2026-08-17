@@ -1,24 +1,27 @@
 import { useState } from 'react'
 import Reveal from '../components/Reveal'
 import useLatestVersion from '../hooks/useLatestVersion'
-import { roadmapCurrent, roadmapPast } from '../data/content'
+import useRoadmap from '../hooks/useRoadmap'
+import { roadmapPast } from '../data/content'
 
 export default function Roadmap() {
+  const { roadmap, loading, live } = useRoadmap()
+
   return (
     <>
-      <PageHeader />
-      <CurrentMilestone />
+      <PageHeader roadmap={roadmap} />
+      <CurrentMilestone roadmap={roadmap} loading={loading} live={live} />
       <PastMilestones />
     </>
   )
 }
 
-function PageHeader() {
+function PageHeader({ roadmap }) {
   return (
     <section className="section" style={{ paddingTop: '4rem', paddingBottom: '1.5rem' }}>
       <div className="container">
         <Reveal direction="down">
-          <div className="eyebrow">roadmap / milestone v1.4</div>
+          <div className="eyebrow">roadmap / milestone {roadmap.version}</div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '2rem', flexWrap: 'wrap', justifyContent: 'space-between' }}>
             <div style={{ maxWidth: '62ch' }}>
               <h1 style={{ marginBottom: '0.6rem' }}>
@@ -28,9 +31,8 @@ function PageHeader() {
                 DELIVERY / HANDLERS / CTRL+C
               </h1>
               <p className="lede" style={{ marginTop: '1.2rem' }}>
-                v1.4 brings FrostVista its first real signal subsystem — the missing
-                half of the process model. Every phase lands with regression coverage
-                before the next starts.
+                {roadmap.summary} Every phase lands with regression coverage before the
+                next starts.
               </p>
             </div>
             <div className="eq" style={{ flexShrink: 0 }}>
@@ -49,11 +51,13 @@ function PageHeader() {
   )
 }
 
-function CurrentMilestone() {
-  const r = roadmapCurrent
+function CurrentMilestone({ roadmap: r, loading, live }) {
   const [open, setOpen] = useState(0)
-  const done = 0
-  const total = r.phases.length
+  const items = r.phases.flatMap((phase) => phase.items)
+  const done = items.filter((item) => item.status === 'complete').length
+  const total = items.length
+  const completePhases = r.phases.filter((phase) => phase.status === 'complete').length
+  const progress = total === 0 ? 0 : Math.round((done / total) * 100)
 
   return (
     <section className="section" style={{ paddingTop: '2rem' }}>
@@ -61,8 +65,10 @@ function CurrentMilestone() {
         <Reveal>
           <div style={{ border: '1px solid var(--border)', background: 'var(--panel)', padding: '1.8rem 1.8rem', marginBottom: '1.4rem' }}>
             <div className="meta-line" style={{ marginBottom: '0.8rem' }}>
-              <span className="tag tag--red">in progress</span>
-              <span className="k" style={{ marginLeft: 'auto' }}>phase {done}/{total} complete</span>
+              <span className={`tag ${r.status === 'complete' ? 'tag--green' : 'tag--red'}`}>
+                {r.status.replace('_', ' ')}
+              </span>
+              <span className="k" style={{ marginLeft: 'auto' }}>phase {completePhases}/{r.phases.length} complete</span>
             </div>
             <h2 style={{ fontSize: '1.5rem', marginBottom: '0.6rem' }}>{r.title}</h2>
             <p style={{ color: 'var(--ink-soft)', fontSize: '0.9rem', lineHeight: '1.75', marginBottom: '1rem' }}>
@@ -71,10 +77,11 @@ function CurrentMilestone() {
             <div className="progress-line">
               <span className="k" style={{ fontSize: '0.66rem' }}>PROGRESS</span>
               <div className="progress-line__track">
-                <div className="progress-line__fill" style={{ width: `${(done / total) * 100}%` }} />
+                <div className="progress-line__fill" style={{ width: `${progress}%` }} />
               </div>
-              <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.7rem', color: 'var(--green)' }}>0%</span>
+              <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.7rem', color: 'var(--green)' }}>{progress}%</span>
             </div>
+            <p className="k" style={{ marginTop: '0.7rem' }}>{loading ? 'syncing roadmap data…' : live ? 'live · FrostVistaOS website-data/roadmap.json' : 'fallback · bundled roadmap snapshot'}</p>
             <p style={{ color: 'var(--muted)', fontSize: '0.8rem', lineHeight: '1.7', marginTop: '1rem' }}>
               <strong style={{ color: 'var(--amber)' }}>SCOPE.</strong> {r.scope}
             </p>
@@ -82,7 +89,7 @@ function CurrentMilestone() {
         </Reveal>
 
         {r.phases.map((p, i) => (
-          <Reveal key={p.name} delay={i * 40}>
+          <Reveal key={p.id} delay={i * 40}>
             <div className="phase-acc">
               <button
                 type="button"
@@ -92,14 +99,20 @@ function CurrentMilestone() {
               >
                 <span className="phase-acc__marker">{open === i ? '−' : '+'}</span>
                 <span className="phase-acc__phase">PHASE 0{i + 1}</span>
-                <span className="phase-acc__name">{p.name}</span>
+                <span className="phase-acc__name">{p.title}</span>
               </button>
               <div className={`phase-acc__body ${open === i ? 'open' : ''}`}>
                 <div className="phase-acc__inner">
                   <div className="phase-acc__items">
-                    <ul className="plain" style={{ fontSize: '0.83rem', lineHeight: '1.7' }}>
+                    <ul className="roadmap-items" style={{ fontSize: '0.83rem', lineHeight: '1.7' }}>
                       {p.items.map((it) => (
-                        <li key={it}>{it}</li>
+                        <li key={it.id} data-status={it.status}>
+                          <div className="roadmap-item__title">
+                            <span>{it.title}</span>
+                            <span className="roadmap-item__status">{it.status.replace('_', ' ')}</span>
+                          </div>
+                          {it.description && <p className="roadmap-item__description">{it.description}</p>}
+                        </li>
                       ))}
                     </ul>
                   </div>
@@ -116,8 +129,8 @@ function CurrentMilestone() {
             </div>
             <ul className="checklist" style={{ fontSize: '0.83rem', lineHeight: '1.7' }}>
               {r.validation.map((v) => (
-                <li key={v}>
-                  <code className="inline">{v}</code>
+                <li key={v.command}>
+                  <code className="inline">{v.command}</code>
                 </li>
               ))}
             </ul>
