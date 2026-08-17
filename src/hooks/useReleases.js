@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react'
 import { roadmapPast } from '../data/content'
+import { CACHE_TTL, readCache, writeCache } from '../lib/persistentCache'
 
 const OWNER = 'AuroBreeze'
 const REPO = 'FrostVistaOS'
 const API = 'https://api.github.com'
+const CACHE_KEY = 'frostvista:releases:v1'
 
 let cache = null
 let fetchPromise = null
@@ -67,10 +69,13 @@ async function fetchLive() {
 }
 
 export default function useReleases() {
+  const stored = readCache(CACHE_KEY)
   const [state, setState] = useState({
-    releases: [...archive].sort((a, b) => verNum(a.version) - verNum(b.version)),
-    loading: true,
-    live: false,
+    releases: stored?.data || [...archive].sort((a, b) => verNum(a.version) - verNum(b.version)),
+    loading: false,
+    live: Boolean(stored),
+    cachedAt: stored?.cachedAt || null,
+    refreshing: false,
     error: null,
   })
 
@@ -78,10 +83,15 @@ export default function useReleases() {
     let cancelled = false
 
     async function load() {
-      if (cache) {
-        if (!cancelled) setState({ releases: cache, loading: false, live: true, error: null })
+      const persistent = readCache(CACHE_KEY)
+      if (persistent && Date.now() - new Date(persistent.cachedAt).getTime() < CACHE_TTL) {
+        if (!cancelled) setState((current) => ({ ...current, releases: persistent.data, live: true, cachedAt: persistent.cachedAt }))
         return
       }
+      if (cache) {
+        if (!cancelled) setState((current) => ({ ...current, releases: cache, live: true, refreshing: true }))
+      }
+      if (!cancelled) setState((current) => ({ ...current, refreshing: true }))
       if (!fetchPromise) {
         fetchPromise = fetchLive()
           .then((r) => {
@@ -95,9 +105,10 @@ export default function useReleases() {
       }
       try {
         const r = await fetchPromise
-        if (!cancelled) setState({ releases: r, loading: false, live: true, error: null })
+        const saved = writeCache(CACHE_KEY, r)
+        if (!cancelled) setState({ releases: r, loading: false, live: true, cachedAt: saved.cachedAt, refreshing: false, error: null })
       } catch (e) {
-        if (!cancelled) setState((s) => ({ ...s, loading: false, live: false, error: e.message }))
+        if (!cancelled) setState((s) => ({ ...s, loading: false, live: false, refreshing: false, error: e.message }))
       }
     }
 

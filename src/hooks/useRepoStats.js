@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react'
 import fallback from '../data/stats.json'
+import { CACHE_TTL, readCache, writeCache } from '../lib/persistentCache'
 
 const OWNER = 'AuroBreeze'
 const REPO = 'FrostVistaOS'
 const API = 'https://api.github.com'
 const HEADERS = { Accept: 'application/vnd.github+json' }
+const CACHE_KEY = 'frostvista:repo-stats:v1'
 
 let cache = null
 let fetchPromise = null
@@ -154,10 +156,13 @@ async function fetchLive() {
 }
 
 export default function useRepoStats() {
+  const stored = readCache(CACHE_KEY)
   const [state, setState] = useState({
-    data: fallback,
-    loading: true,
-    live: false,
+    data: stored?.data || fallback,
+    loading: false,
+    live: Boolean(stored),
+    cachedAt: stored?.cachedAt || fallback.meta?.fetchedAt || null,
+    refreshing: false,
     error: null,
   })
 
@@ -165,10 +170,15 @@ export default function useRepoStats() {
     let cancelled = false
 
     async function load() {
-      if (cache) {
-        setState({ data: cache, loading: false, live: true, error: null })
+      const persistent = readCache(CACHE_KEY)
+      if (persistent && Date.now() - new Date(persistent.cachedAt).getTime() < CACHE_TTL) {
+        if (!cancelled) setState((current) => ({ ...current, data: persistent.data, live: true, cachedAt: persistent.cachedAt }))
         return
       }
+      if (cache) {
+        if (!cancelled) setState((current) => ({ ...current, data: cache, live: true, refreshing: true }))
+      }
+      if (!cancelled) setState((current) => ({ ...current, refreshing: true }))
       if (!fetchPromise) {
         fetchPromise = fetchLive()
           .then((live) => {
@@ -182,9 +192,10 @@ export default function useRepoStats() {
       }
       try {
         const live = await fetchPromise
-        if (!cancelled) setState({ data: live, loading: false, live: true, error: null })
+        const saved = writeCache(CACHE_KEY, live)
+        if (!cancelled) setState({ data: live, loading: false, live: true, cachedAt: saved.cachedAt, refreshing: false, error: null })
       } catch (e) {
-        if (!cancelled) setState((s) => ({ ...s, loading: false, live: false, error: e.message }))
+        if (!cancelled) setState((s) => ({ ...s, loading: false, live: false, refreshing: false, error: e.message }))
       }
     }
 

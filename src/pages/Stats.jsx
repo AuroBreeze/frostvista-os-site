@@ -21,7 +21,7 @@ function barWidth(v, max) {
 }
 
 export default function Stats() {
-  const { data: stats, loading, live, error } = useRepoStats()
+  const { data: stats, loading, live, refreshing, cachedAt, error } = useRepoStats()
 
   if (loading || !stats) {
     return (
@@ -80,7 +80,7 @@ export default function Stats() {
                   </span>
                   <span>repo / status</span>
                   <span className="code-block__status" style={{ color: 'var(--green)' }}>
-                    {live ? 'live' : 'snapshot'}
+                     {live ? 'live' : refreshing ? 'refreshing' : 'cached'}
                   </span>
                 </div>
                 <div style={{ padding: '1.4rem 1.6rem', display: 'flex', flexDirection: 'column', gap: '0.7rem' }}>
@@ -200,10 +200,10 @@ export default function Stats() {
               {live ? (
                 <span style={{ color: 'var(--green)' }}>live · {stats.meta.source}</span>
               ) : (
-                <span style={{ color: 'var(--amber)' }}>snapshot · live fetch failed ({error})</span>
+                 <span style={{ color: 'var(--amber)' }}>cached · live fetch failed ({error})</span>
               )}
               <span className="k" style={{ marginLeft: 'auto' }}>
-                fetched {fmtTime(stats.meta.fetchedAt)}
+                 cached {fmtTime(cachedAt || stats.meta.fetchedAt)}
               </span>
             </div>
           </Reveal>

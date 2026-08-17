@@ -124,8 +124,9 @@ function MarkdownBody({ source }) {
 }
 
 export default function Changelog() {
-  const { releases, loading, live, error } = useReleases()
+  const { releases, loading, live, refreshing, cachedAt, error } = useReleases()
   const [sel, setSel] = useState(() => (releases.length ? releases.length - 1 : 0))
+  const safeSel = sel < releases.length ? sel : releases.length - 1
 
   if (loading) {
     return (
@@ -146,7 +147,7 @@ export default function Changelog() {
     )
   }
 
-  const current = releases[sel]
+  const current = releases[safeSel]
 
   return (
     <>
@@ -158,7 +159,7 @@ export default function Changelog() {
               <span className="tag tag--green">{releases.length} releases</span>
               <span className="tag tag--neutral">latest {releases[releases.length - 1]?.version}</span>
               <span style={{ color: 'var(--muted)', fontSize: '0.72rem', marginLeft: 'auto' }}>
-                {live ? 'live · api.github.com' : 'archive · snapshot'}
+                {live ? 'live · api.github.com' : refreshing ? 'refreshing · cached data' : 'cached · archive'}
               </span>
             </div>
           </Reveal>
@@ -167,7 +168,7 @@ export default function Changelog() {
           <Reveal direction="down" delay={80}>
             <div className="rel-timeline">
               {releases.map((r, i) => {
-                const isActive = sel === i
+                const isActive = safeSel === i
                 const isNewest = i === releases.length - 1
                 return (
                   <button
@@ -207,8 +208,8 @@ export default function Changelog() {
                     <span />
                   </span>
                   <span>git show {current.version}</span>
-                  <span className="code-block__status" style={{ color: sel === releases.length - 1 ? 'var(--red)' : 'var(--green)' }}>
-                    {sel === releases.length - 1 ? 'latest' : 'release'}
+                  <span className="code-block__status" style={{ color: safeSel === releases.length - 1 ? 'var(--red)' : 'var(--green)' }}>
+                    {safeSel === releases.length - 1 ? 'latest' : 'release'}
                   </span>
                 </div>
                 <div style={{ padding: '1.4rem 1.8rem' }}>
@@ -250,8 +251,9 @@ export default function Changelog() {
               {live ? (
                 <span style={{ color: 'var(--green)' }}>live · api.github.com/repos/AuroBreeze/FrostVistaOS/releases</span>
               ) : (
-                <span style={{ color: 'var(--amber)' }}>archive · live fetch failed ({error})</span>
+                <span style={{ color: 'var(--amber)' }}>cached · live fetch failed ({error})</span>
               )}
+              {cachedAt && <span className="k">cached {fmtDate(cachedAt)}</span>}
             </div>
           </Reveal>
         </div>
